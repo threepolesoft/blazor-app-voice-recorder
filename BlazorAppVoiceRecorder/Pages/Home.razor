@@ -1,0 +1,36 @@
+﻿@page "/"
+@using Microsoft.JSInterop
+
+<PageTitle>Home</PageTitle>
+
+
+<h3>Voice Recorder</h3>
+
+<div>
+    <button @onclick="StartRecording">Start Recording</button>
+    <button @onclick="StopRecording">Stop Recording</button>
+</div>
+
+@if (!string.IsNullOrEmpty(AudioUrl))
+{
+    <audio controls>
+        <source src="@AudioUrl" type="audio/wav">
+    </audio>
+}
+
+@code {
+    private string AudioUrl;
+
+    [Inject]
+    private IJSRuntime JSRuntime { get; set; }
+
+    private async Task StartRecording()
+    {
+        await JSRuntime.InvokeVoidAsync("startRecording");
+    }
+
+    private async Task StopRecording()
+    {
+        AudioUrl = await JSRuntime.InvokeAsync<string>("stopRecording");
+    }
+}
